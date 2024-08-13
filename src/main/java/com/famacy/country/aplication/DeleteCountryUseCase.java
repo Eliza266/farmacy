@@ -11,6 +11,6 @@ public class DeleteCountryUseCase {
     }
 
     public void execute(String codeCountry){
-
+        countryService.deleteCountry(codeCountry);
     }
 }

@@ -1,4 +1,4 @@
-package com.famacy.country.infrastructure;
+package com.famacy.modeadmin.infrastructure;
 
 import com.famacy.country.aplication.CreateCountryUseCase;
 import com.famacy.country.aplication.DeleteCountryUseCase;
@@ -6,7 +6,12 @@ import com.famacy.country.aplication.FindAllCountryUseCase;
 import com.famacy.country.aplication.FindCountryUseCase;
 import com.famacy.country.aplication.UpdateCountryUseCase;
 import com.famacy.country.domain.Country;
-import com.famacy.country.domain.CountryService;
+import com.famacy.country.domain.modeadmiService;
+import com.famacy.modeadmin.aplication.CreateModeadmiUseCase;
+import com.famacy.modeadmin.aplication.DeleteModeadmiUseCase;
+import com.famacy.modeadmin.aplication.FindAllModeadmiUseCase;
+import com.famacy.modeadmin.aplication.FindModeadmiUseCase;
+import com.famacy.modeadmin.aplication.UpdateModeadmiUseCase;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,22 +22,22 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-public class CountryController {
-    private CountryService countryService;
-    private CreateCountryUseCase createCountryUseCase;
-    private DeleteCountryUseCase deleteCountryUseCase;
-    private FindAllCountryUseCase findAllCountryUseCase;
-    private FindCountryUseCase findCountryUseCase;
-    private UpdateCountryUseCase updateCountryUseCase;
+public class ModeadmiController {
+    private ModeadmiController modeadmiController;
+    private CreateModeadmiUseCase createModeadmiUseCase;
+    private DeleteModeadmiUseCase deleteModeadmiUseCase;
+    private FindAllModeadmiUseCase findAllModeadmiUseCase;
+    private FindModeadmiUseCase findModeadmiUseCase;
+    private UpdateModeadmiUseCase updateModeadmiUseCase;
 
 
-    public CountryController() {
-        this.countryService = new CountryRepository();
-        this.createCountryUseCase = new CreateCountryUseCase(countryService);
-        this.deleteCountryUseCase = new DeleteCountryUseCase(countryService);
-        this.findAllCountryUseCase = new FindAllCountryUseCase(countryService);
-        this.findCountryUseCase = new FindCountryUseCase(countryService);
-        this.updateCountryUseCase = new UpdateCountryUseCase(countryService);
+    public ModeadmiController() {
+        this.modeadmiController = new ModeadmiRepository();
+        this.createModeadmiUseCase = new CreateModeadmiUseCase(modeadmiService);
+        this.deleteModeadmiUseCase = new DeleteModeadmiUseCase(modeadmiService);
+        this.findAllModeadmiUseCase = new FindAllModeadmiUseCase(modeadmiService);
+        this.findModeadmiUseCase = new FindModeadmiUseCase(modeadmiService);
+        this.updateModeadmiUseCase = new UpdateModeadmiUseCase(modeadmiService);
     }
     public void mainMenu(){
         String opciones = "1. Add Country\n2. Search country\n3. Update Country\n4. Delete Country\n5 List Countries\n6. Return main menu";

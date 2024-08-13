@@ -1,4 +1,4 @@
-package com.famacy.country.infrastructure;
+package com.famacy.modeadmin.infrastructure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +13,11 @@ import java.sql.SQLException;
 import com.famacy.country.domain.Country;
 import com.famacy.country.domain.CountryService;
 
-public class CountryRepository implements CountryService {
+public class ModeadmiRepository implements CountryService {
 
     private Connection connection;
     
-    public CountryRepository() {
+    public ModeadmiRepository() {
         try {
             Properties props = new Properties();
             props.load(getClass().getClassLoader().getResourceAsStream("configdb.properties"));
