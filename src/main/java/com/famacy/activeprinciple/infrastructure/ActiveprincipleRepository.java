@@ -12,8 +12,7 @@ import java.sql.SQLException;
 
 import com.famacy.activeprinciple.domain.Activeprinciple;
 import com.famacy.activeprinciple.domain.ActiveprincipleService;
-import com.famacy.modeadmin.domain.Modeadmi;
-import com.famacy.modeadmin.domain.ModeadmiService;
+
 
 public class ActiveprincipleRepository implements ActiveprincipleService {
 
