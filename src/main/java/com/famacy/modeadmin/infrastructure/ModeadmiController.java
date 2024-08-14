@@ -1,17 +1,11 @@
 package com.famacy.modeadmin.infrastructure;
-
-import com.famacy.country.aplication.CreateCountryUseCase;
-import com.famacy.country.aplication.DeleteCountryUseCase;
-import com.famacy.country.aplication.FindAllCountryUseCase;
-import com.famacy.country.aplication.FindCountryUseCase;
-import com.famacy.country.aplication.UpdateCountryUseCase;
-import com.famacy.country.domain.Country;
-import com.famacy.country.domain.modeadmiService;
 import com.famacy.modeadmin.aplication.CreateModeadmiUseCase;
 import com.famacy.modeadmin.aplication.DeleteModeadmiUseCase;
 import com.famacy.modeadmin.aplication.FindAllModeadmiUseCase;
 import com.famacy.modeadmin.aplication.FindModeadmiUseCase;
 import com.famacy.modeadmin.aplication.UpdateModeadmiUseCase;
+import com.famacy.modeadmin.domain.Modeadmi;
+import com.famacy.modeadmin.domain.ModeadmiService;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +17,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public class ModeadmiController {
-    private ModeadmiController modeadmiController;
+    private ModeadmiService modeadmiService;
     private CreateModeadmiUseCase createModeadmiUseCase;
     private DeleteModeadmiUseCase deleteModeadmiUseCase;
     private FindAllModeadmiUseCase findAllModeadmiUseCase;
@@ -32,7 +26,7 @@ public class ModeadmiController {
 
 
     public ModeadmiController() {
-        this.modeadmiController = new ModeadmiRepository();
+        this.modeadmiService = new ModeadmiRepository();
         this.createModeadmiUseCase = new CreateModeadmiUseCase(modeadmiService);
         this.deleteModeadmiUseCase = new DeleteModeadmiUseCase(modeadmiService);
         this.findAllModeadmiUseCase = new FindAllModeadmiUseCase(modeadmiService);
@@ -40,25 +34,25 @@ public class ModeadmiController {
         this.updateModeadmiUseCase = new UpdateModeadmiUseCase(modeadmiService);
     }
     public void mainMenu(){
-        String opciones = "1. Add Country\n2. Search country\n3. Update Country\n4. Delete Country\n5 List Countries\n6. Return main menu";
+        String opciones = "1. Add Mode Administration\n2. Search Mode Administration\n3. Update Mode Administration\n4. Delete Mode Administration\n5 List Mode Administrations\n6. Return main menu";
         int op;
         do{
             op =Integer.parseInt(JOptionPane.showInputDialog(null,opciones));
             switch (op) {
-                case 1:
-                    addCountry();
+                case 1: 
+                    addModeadmi();
                     break;
                 case 2:
-                    findCountry();
+                    findModeadmi();
                     break;
                 case 3:
-                    updateCountry();
+                    updateModeadmi();
                     break;
                 case 4:
-                    deleteCountry();
+                    deleteModeadmi();
                     break;
                 case 5:
-                    findAllCountry();
+                    findAllmModeadmi();
                     break;
                 case 6:
                     break;
@@ -71,55 +65,53 @@ public class ModeadmiController {
 
     }
 
-    public void addCountry() {
-        String codeCountry = JOptionPane.showInputDialog(null, "Country Code:");
-        String name = JOptionPane.showInputDialog(null, "Country Name:");
+    public void addModeadmi() {
+        String name = JOptionPane.showInputDialog(null, "Mode administration Name:");
     
-        Country country = new Country();
-        country.setCodeCountry(codeCountry);
-        country.setName(name);
+        Modeadmi modeadmi = new Modeadmi();
+        modeadmi.setName(name);
     
-        createCountryUseCase.execute(country);
+        createModeadmiUseCase.execute(modeadmi);
     
-        JOptionPane.showMessageDialog(null, "Country created:\nCode: " + country.getCodeCountry() + "\nName: " + country.getName());
+        JOptionPane.showMessageDialog(null, "Mode Administration created:\nId: " + modeadmi.getIdap() + "\nName: " + modeadmi.getName());
     }
 
-    public Optional<Country> findCountry() {
-        String codeCountry = JOptionPane.showInputDialog(null, "Ingrese el ID de la Country: ");
-        Optional<Country> country = findCountryUseCase.execute(codeCountry);
-        showCountry(country);
-        return country;
+    public Optional<Modeadmi> findModeadmi() {
+        int idap = Integer.parseInt(JOptionPane.showInputDialog(null, "Ingrese el ID de la Country: "));
+        Optional<Modeadmi> modeadmi = findModeadmiUseCase.execute(idap);
+        showModeadmi(modeadmi);
+        return modeadmi;
     }
 
-    public void updateCountry(){
-        Optional<Country> countryOptional = findCountry();
-        if (countryOptional.isPresent()) {
-            Country country = countryOptional.get();
-            country.setName(JOptionPane.showInputDialog(null, "Ingrese el Nombre de la country"));
-            updateCountryUseCase.execute(country);
-            showCountry(countryOptional);
+    public void updateModeadmi(){
+        Optional<Modeadmi> ModeOption = findModeadmi();
+        if (ModeOption.isPresent()) {
+            Modeadmi modeadmi = ModeOption.get();
+            modeadmi.setName(JOptionPane.showInputDialog(null, "Ingrese el Nombre de la country"));
+            updateModeadmiUseCase.execute(modeadmi);
+            showModeadmi(ModeOption);
             }
 
-    }
+     }
 
-    public void deleteCountry(){
-        Optional<Country> countryOptional = findCountry();
-        if ( countryOptional.isPresent()) {
-            Country country = countryOptional.get();
-            deleteCountryUseCase.execute(country.getCodeCountry());
-            JOptionPane.showMessageDialog(null, "Country deleted:\nCode: " + country.getCodeCountry() + "\nName: " + country.getName());
+    public void deleteModeadmi(){
+        Optional<Modeadmi> modeOption = findModeadmi();
+        if ( modeOption.isPresent()) {
+            Modeadmi modeadmi = modeOption.get();
+            deleteModeadmiUseCase.execute(modeadmi.getIdap());
+            JOptionPane.showMessageDialog(null, "Mode deleted:\nId: " + modeadmi.getIdap() + "\nName: " + modeadmi.getName());
         }
     }
 
-    public List<Country> findAllCountry(){
-        List<Country> countryes = findAllCountryUseCase.execute();
+    public List<Modeadmi> findAllmModeadmi(){
+        List<Modeadmi> modes = findAllModeadmiUseCase.execute();
 
         String[] columns = {"ID", "Name"};
         DefaultTableModel model = new DefaultTableModel(columns, 0);
 
-        for (Country country : countryes) {
+        for (Modeadmi country : modes) {
             Object[] row = {
-                    country.getCodeCountry(),
+                    country.getIdap(),
                     country.getName()
             };
             model.addRow(row);
@@ -130,24 +122,24 @@ public class ModeadmiController {
         JPanel panel = new JPanel();
         panel.add(scrollPane);
 
-        JOptionPane.showMessageDialog(null, panel, "Country List", JOptionPane.PLAIN_MESSAGE);
-        return countryes;
+        JOptionPane.showMessageDialog(null, panel, "Modes List", JOptionPane.PLAIN_MESSAGE);
+        return modes;
     }
 
-    public void showCountry(Optional<Country> country){
+    public void showModeadmi(Optional<Modeadmi> modeadmi){
 
         String[] columns = {"ID", "Name"};
         DefaultTableModel model = new DefaultTableModel(columns, 0);
 
-        if (country.isPresent()) {
-            Country count = country.get();
+        if (modeadmi.isPresent()) {
+            Modeadmi mod = modeadmi.get();
             Object[] row = {
-                    count.getCodeCountry(),
-                    count.getName()
+                    mod.getIdap(),
+                    mod.getName()
             };
             model.addRow(row);
         } else {
-            JOptionPane.showMessageDialog(null, "No Countries", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "No Modes", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -156,7 +148,7 @@ public class ModeadmiController {
         JPanel panel = new JPanel();
         panel.add(scrollPane);
 
-        JOptionPane.showMessageDialog(null, panel, "Country List", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, panel, "Modes List", JOptionPane.PLAIN_MESSAGE);
     
 
     }
