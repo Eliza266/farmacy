@@ -10,7 +10,6 @@ import com.famacy.city.domain.CityService;
 
 import java.util.List;
 import java.util.Optional;
-
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -35,42 +34,52 @@ public class CityController {
     }
 
     public void mainMenu() {
-        String opciones = "1. Add City\n2. Search city\n3. Update City\n4. Delete City\n5 List Countries\n6. Return main menu";
-        int op;
+        String opciones = "1. Add City\n2. Search City\n3. Update City\n4. Delete City\n5. List Cities\n6. Return to Main Menu";
+        int op = -1; 
         do {
-            op = Integer.parseInt(JOptionPane.showInputDialog(null, opciones));
-            switch (op) {
-                case 1:
-                    addCity();
-                    break;
-                case 2:
-                    findCity();
-                    break;
-                case 3:
-                    updateCity();
-                    break;
-                case 4:
-                    deleteCity();
-                    break;
-                case 5:
-                    findAllCity();
-                    break;
-                case 6:
-                    break;
-                default:
-                    JOptionPane.showMessageDialog(null, "Error en la opcion ingresada", "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    break;
+            String input = JOptionPane.showInputDialog(null, opciones);
+            if (input == null || input.trim().isEmpty()) {
+                return; 
             }
-
+            try {
+                op = Integer.parseInt(input.trim());
+                switch (op) {
+                    case 1:
+                        addCity();
+                        break;
+                    case 2:
+                        findCity();
+                        break;
+                    case 3:
+                        updateCity();
+                        break;
+                    case 4:
+                        deleteCity();
+                        break;
+                    case 5:
+                        findAllCity();
+                        break;
+                    case 6:
+                        break;  
+                    default:
+                        JOptionPane.showMessageDialog(null, "Error en la opción ingresada", "Error", JOptionPane.ERROR_MESSAGE);
+                        break;
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Opción inválida. Por favor, ingrese un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         } while (op != 6);
-
     }
 
     public void addCity() {
         String codCity = JOptionPane.showInputDialog(null, "City Code:");
+        if (codCity == null) return;
+
         String name = JOptionPane.showInputDialog(null, "City Name:");
+        if (name == null) return;
+
         String codReg = JOptionPane.showInputDialog(null, "Region Code:");
+        if (codReg == null) return;
 
         City city = new City();
         city.setCodCity(codCity);
@@ -78,12 +87,13 @@ public class CityController {
         city.setCodReg(codReg);
 
         createCityUseCase.execute(city);
-        JOptionPane.showMessageDialog(null, "City created:\nCode: " + city.getCodCity() + "\nName: " + city.getName()
-                + "\nCodReg: " + city.getCodReg());
+        JOptionPane.showMessageDialog(null, "City created:\nCode: " + city.getCodCity() + "\nName: " + city.getName() + "\nRegion Code: " + city.getCodReg());
     }
 
     public Optional<City> findCity() {
-        String codCity = JOptionPane.showInputDialog(null, "Ingrese el ID de la City: ");
+        String codCity = JOptionPane.showInputDialog(null, "Ingrese el ID de la City:");
+        if (codCity == null) return Optional.empty();
+
         Optional<City> city = findCityUseCase.execute(codCity);
         showCity(city);
         return city;
@@ -93,36 +103,41 @@ public class CityController {
         Optional<City> cityOptional = findCity();
         if (cityOptional.isPresent()) {
             City city = cityOptional.get();
-            city.setName(JOptionPane.showInputDialog(null, "Insert Name City"));
-            city.setCodReg(JOptionPane.showInputDialog(null, "Insert Code Region"));
+
+            String newName = JOptionPane.showInputDialog(null, "Insert City Name", city.getName());
+            if (newName == null) return;
+
+            String newCodReg = JOptionPane.showInputDialog(null, "Insert Region Code", city.getCodReg());
+            if (newCodReg == null) return;
+
+            city.setName(newName);
+            city.setCodReg(newCodReg);
             updateCityUseCase.execute(city);
             showCity(cityOptional);
         }
-
     }
 
     public void deleteCity() {
         Optional<City> cityOptional = findCity();
         if (cityOptional.isPresent()) {
             City city = cityOptional.get();
-            deleteCityUseCase.execute(city.getCodCity());
-            JOptionPane.showMessageDialog(null, "City deleted:\nCode: " + city.getCodReg() + "\nName: " + city.getName()
-                    + "\nCode Region: " + city.getCodCity());
+
+            int confirm = JOptionPane.showConfirmDialog(null, "¿Está seguro de eliminar la ciudad?\nCode: " + city.getCodCity() + "\nName: " + city.getName() + "\nRegion Code: " + city.getCodReg(), "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                deleteCityUseCase.execute(city.getCodCity());
+                JOptionPane.showMessageDialog(null, "City deleted:\nCode: " + city.getCodCity() + "\nName: " + city.getName() + "\nRegion Code: " + city.getCodReg());
+            }
         }
     }
 
     public List<City> findAllCity() {
-        List<City> cityes = findAllCityUseCase.execute();
+        List<City> cities = findAllCityUseCase.execute();
 
-        String[] columns = { "ID", "Name", "CODE REGION" };
+        String[] columns = {"ID", "Name", "Region Code"};
         DefaultTableModel model = new DefaultTableModel(columns, 0);
 
-        for (City city : cityes) {
-            Object[] row = {
-                    city.getCodReg(),
-                    city.getName(),
-                    city.getCodCity()
-            };
+        for (City city : cities) {
+            Object[] row = {city.getCodCity(), city.getName(), city.getCodReg()};
             model.addRow(row);
         }
 
@@ -132,24 +147,19 @@ public class CityController {
         panel.add(scrollPane);
 
         JOptionPane.showMessageDialog(null, panel, "City List", JOptionPane.PLAIN_MESSAGE);
-        return cityes;
+        return cities;
     }
 
     public void showCity(Optional<City> city) {
-
-        String[] columns = { "ID", "Name", "CODE REGION" };
+        String[] columns = {"ID", "Name", "Region Code"};
         DefaultTableModel model = new DefaultTableModel(columns, 0);
 
         if (city.isPresent()) {
             City count = city.get();
-            Object[] row = {
-                    count.getCodReg(),
-                    count.getName(),
-                    count.getCodCity()
-            };
+            Object[] row = {count.getCodCity(), count.getName(), count.getCodReg()};
             model.addRow(row);
         } else {
-            JOptionPane.showMessageDialog(null, "No Cities", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "No Cities found", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -158,8 +168,6 @@ public class CityController {
         JPanel panel = new JPanel();
         panel.add(scrollPane);
 
-        JOptionPane.showMessageDialog(null, panel, "City List", JOptionPane.PLAIN_MESSAGE);
-
+        JOptionPane.showMessageDialog(null, panel, "City Details", JOptionPane.PLAIN_MESSAGE);
     }
-
 }

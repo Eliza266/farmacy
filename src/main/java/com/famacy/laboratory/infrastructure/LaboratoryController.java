@@ -8,6 +8,7 @@ import com.famacy.laboratory.aplication.UpdateLaboratoryUseCase;
 import com.famacy.laboratory.domain.Laboratory;
 import com.famacy.laboratory.domain.LaboratoryService;
 
+import java.awt.Dimension;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,41 +36,51 @@ public class LaboratoryController {
     }
 
     public void mainMenu() {
-        String opciones = "1. Add Laboratory\n2. Search laboratory\n3. Update Laboratory\n4. Delete Laboratory\n5 List Countries\n6. Return main menu";
-        int op;
+        String opciones = "1. Add Laboratory\n2. Search Laboratory\n3. Update Laboratory\n4. Delete Laboratory\n5. List Laboratories\n6. Return to Main Menu";
+        int op = -1;
         do {
-            op = Integer.parseInt(JOptionPane.showInputDialog(null, opciones));
-            switch (op) {
-                case 1:
-                    addLaboratory();
-                    break;
-                case 2:
-                    findLaboratory();
-                    break;
-                case 3:
-                    updateLaboratory();
-                    break;
-                case 4:
-                    deleteLaboratory();
-                    break;
-                case 5:
-                    findAllLaboratory();
-                    break;
-                case 6:
-                    break;
-                default:
-                    JOptionPane.showMessageDialog(null, "Error en la opcion ingresada", "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    break;
+            String input = JOptionPane.showInputDialog(null, opciones);
+            if (input == null || input.trim().isEmpty()) {
+                return;
             }
-
+            try {
+                op = Integer.parseInt(input.trim());
+                switch (op) {
+                    case 1:
+                        addLaboratory();
+                        break;
+                    case 2:
+                        findLaboratory();
+                        break;
+                    case 3:
+                        updateLaboratory();
+                        break;
+                    case 4:
+                        deleteLaboratory();
+                        break;
+                    case 5:
+                        findAllLaboratory();
+                        break;
+                    case 6:
+                        break;
+                    default:
+                        JOptionPane.showMessageDialog(null, "Error en la opción ingresada", "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                        break;
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Opción inválida. Por favor, ingrese un número válido.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         } while (op != 6);
-
     }
 
     public void addLaboratory() {
         String name = JOptionPane.showInputDialog(null, "Laboratory Name:");
+        if (name == null) return;
+
         String codCity = JOptionPane.showInputDialog(null, "City Code:");
+        if (codCity == null) return;
 
         Laboratory laboratory = new Laboratory();
         laboratory.setName(name);
@@ -77,11 +88,22 @@ public class LaboratoryController {
 
         createLaboratoryUseCase.execute(laboratory);
         JOptionPane.showMessageDialog(null, "Laboratory created:\nCode: " + laboratory.getIdLab() + "\nName: "
-                + laboratory.getName() + "\ncodCity: " + laboratory.getCodCity());
+                + laboratory.getName() + "\nCity Code: " + laboratory.getCodCity());
     }
 
     public Optional<Laboratory> findLaboratory() {
-        int idLab = Integer.parseInt(JOptionPane.showInputDialog(null, "Ingrese el ID de la Laboratory: "));
+        String input = JOptionPane.showInputDialog(null, "Ingrese el ID del Laboratory: ");
+        if (input == null || input.trim().isEmpty()) {
+            return Optional.empty();
+        }
+        int idLab;
+        try {
+            idLab = Integer.parseInt(input.trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "ID inválido. Debe ser un número entero.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return Optional.empty();
+        }
         Optional<Laboratory> laboratory = findLaboratoryUseCase.execute(idLab);
         showLaboratory(laboratory);
         return laboratory;
@@ -91,31 +113,40 @@ public class LaboratoryController {
         Optional<Laboratory> laboratoryOptional = findLaboratory();
         if (laboratoryOptional.isPresent()) {
             Laboratory laboratory = laboratoryOptional.get();
-            laboratory.setName(JOptionPane.showInputDialog(null, "Insert Name Laboratory"));
-            laboratory.setCodCity(JOptionPane.showInputDialog(null, "Insert Code City"));
+            String newName = JOptionPane.showInputDialog(null, "Insert Name Laboratory", laboratory.getName());
+            if (newName == null) return;
+
+            String newCodCity = JOptionPane.showInputDialog(null, "Insert Code City", laboratory.getCodCity());
+            if (newCodCity == null) return;
+
+            laboratory.setName(newName);
+            laboratory.setCodCity(newCodCity);
+
             updateLaboratoryUseCase.execute(laboratory);
             showLaboratory(laboratoryOptional);
         }
-
     }
 
     public void deleteLaboratory() {
         Optional<Laboratory> laboratoryOptional = findLaboratory();
         if (laboratoryOptional.isPresent()) {
             Laboratory laboratory = laboratoryOptional.get();
-            deleteLaboratoryUseCase.execute(laboratory.getIdLab());
-            JOptionPane.showMessageDialog(null, "Laboratory deleted:\nCode: " + laboratory.getIdLab() + "\nName: "
-                    + laboratory.getName() + "\nCode City: " + laboratory.getCodCity());
+            int confirm = JOptionPane.showConfirmDialog(null, "¿Está seguro de eliminar el Laboratory?\nCode: " + laboratory.getIdLab() + "\nName: " + laboratory.getName(), "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                deleteLaboratoryUseCase.execute(laboratory.getIdLab());
+                JOptionPane.showMessageDialog(null, "Laboratory deleted:\nCode: " + laboratory.getIdLab() + "\nName: "
+                        + laboratory.getName() + "\nCity Code: " + laboratory.getCodCity());
+            }
         }
     }
 
     public List<Laboratory> findAllLaboratory() {
-        List<Laboratory> laboratoryes = findAllLaboratoryUseCase.execute();
+        List<Laboratory> laboratories = findAllLaboratoryUseCase.execute();
 
-        String[] columns = { "ID", "Name", "CODE CITY" };
+        String[] columns = { "ID", "Name", "City Code" };
         DefaultTableModel model = new DefaultTableModel(columns, 0);
 
-        for (Laboratory laboratory : laboratoryes) {
+        for (Laboratory laboratory : laboratories) {
             Object[] row = {
                     laboratory.getIdLab(),
                     laboratory.getName(),
@@ -129,25 +160,28 @@ public class LaboratoryController {
         JPanel panel = new JPanel();
         panel.add(scrollPane);
 
+        table.setPreferredSize(new Dimension(800, 400));
+        scrollPane.setPreferredSize(new Dimension(800, 400));
+        panel.setPreferredSize(new Dimension(800, 400));
+
         JOptionPane.showMessageDialog(null, panel, "Laboratory List", JOptionPane.PLAIN_MESSAGE);
-        return laboratoryes;
+        return laboratories;
     }
 
     public void showLaboratory(Optional<Laboratory> laboratory) {
-
-        String[] columns = { "ID", "Name", "CODE REGION" };
+        String[] columns = { "ID", "Name", "City Code" };
         DefaultTableModel model = new DefaultTableModel(columns, 0);
 
         if (laboratory.isPresent()) {
-            Laboratory count = laboratory.get();
+            Laboratory lab = laboratory.get();
             Object[] row = {
-                    count.getIdLab(),
-                    count.getName(),
-                    count.getCodCity()
+                    lab.getIdLab(),
+                    lab.getName(),
+                    lab.getCodCity()
             };
             model.addRow(row);
         } else {
-            JOptionPane.showMessageDialog(null, "No Cities", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "No Laboratory found", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -156,8 +190,10 @@ public class LaboratoryController {
         JPanel panel = new JPanel();
         panel.add(scrollPane);
 
-        JOptionPane.showMessageDialog(null, panel, "Laboratory List", JOptionPane.PLAIN_MESSAGE);
+        table.setPreferredSize(new Dimension(800, 400));
+        scrollPane.setPreferredSize(new Dimension(800, 400));
+        panel.setPreferredSize(new Dimension(800, 400));
 
+        JOptionPane.showMessageDialog(null, panel, "Laboratory Details", JOptionPane.PLAIN_MESSAGE);
     }
-
 }

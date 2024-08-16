@@ -77,7 +77,7 @@ public class ActiveprincipleRepository implements ActiveprincipleService {
             ps.setInt(1, idap);
             try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        Activeprinciple activeprinciple = new Activeprinciple(rs.getInt("idap"), rs.getString("nombre"));
+                        Activeprinciple activeprinciple = new Activeprinciple(rs.getInt("idap"), rs.getString("name"));
                         return Optional.of(activeprinciple);
                     }
                 }
