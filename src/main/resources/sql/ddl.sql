@@ -1,65 +1,45 @@
--- Insert data into country table
-INSERT INTO country (codeCountry, name)
-VALUES
-('US', 'United States'),
-('MX', 'Mexico');
+-- Insertar en la tabla country
+INSERT INTO country (codeCountry, name) VALUES ('US', 'United States');
+INSERT INTO country (codeCountry, name) VALUES ('MX', 'Mexico');
 
--- Insert data into region table
-INSERT INTO region (codReg, name, codeCountry)
-VALUES
-('CA', 'California', 'US'),
-('JAL', 'Jalisco', 'MX');
+-- Insertar en la tabla unitmeasurement
+INSERT INTO unitmeasurement (name) VALUES ('Milligram');
+INSERT INTO unitmeasurement (name) VALUES ('Milliliter');
 
--- Insert data into city table
-INSERT INTO city (codCity, name, codReg)
-VALUES
-('LA', 'Los Angeles', 'CA'),
-('GDL', 'Guadalajara', 'JAL');
+-- Insertar en la tabla modeadmin
+INSERT INTO modeadmin (description) VALUES ('Oral');
+INSERT INTO modeadmin (description) VALUES ('Topical');
 
--- Insert data into unitmeasurement table
-INSERT INTO unitmeasurement (name)
-VALUES
-('Milligram'),
-('Milliliter');
+-- Insertar en la tabla activeprinciple
+INSERT INTO activeprinciple (name) VALUES ('Paracetamol');
+INSERT INTO activeprinciple (name) VALUES ('Ibuprofen');
 
--- Insert data into modeadmin table
-INSERT INTO modeadmin (description)
-VALUES
-('Oral Administration'),
-('Topical Application');
+-- Insertar en la tabla region
+INSERT INTO region (codReg, name, codeCountry) VALUES ('TX', 'Texas', 'US');
+INSERT INTO region (codReg, name, codeCountry) VALUES ('CDMX', 'Ciudad de Mexico', 'MX');
 
--- Insert data into activeprinciple table
-INSERT INTO activeprinciple (name)
-VALUES
-('Ibuprofen'),
-('Paracetamol');
+-- Insertar en la tabla city
+INSERT INTO city (codCity, name, codReg) VALUES ('AUS', 'Austin', 'TX');
+INSERT INTO city (codCity, name, codReg) VALUES ('CEN', 'Centro', 'CDMX');
 
--- Insert data into laboratory table
-INSERT INTO laboratory (name, codCity)
-VALUES
-('Pfizer Inc.', 'LA'),
-('Laboratorios Liomont', 'GDL');
+-- Insertar en la tabla laboratory
+INSERT INTO laboratory (name, codCity) VALUES ('Pfizer', 'AUS');
+INSERT INTO laboratory (name, codCity) VALUES ('Genomma Lab', 'CEN');
 
--- Insert data into pharmacy table
-INSERT INTO pharmacy (name, addres, long, lat, logo, codCity)
-VALUES
-('CVS Pharmacy', '123 Main St, Los Angeles, CA', -118.2437, 34.0522, 'cvs_logo.png', 'LA'),
-('Farmacia Guadalajara', 'Av. Vallarta 1234, Guadalajara, Jalisco', -103.3918, 20.6767, 'farmacia_gdl_logo.png', 'GDL');
+-- Insertar en la tabla pharmacy
+INSERT INTO pharmacy (name, addres, longi, lat, logo, codCity) VALUES ('Walgreens', '123 Main St', -97.7431, 30.2672, 'walgreens.png', 'AUS');
+INSERT INTO pharmacy (name, addres, longi, lat, logo, codCity) VALUES ('Farmacias del Ahorro', 'Av. Insurgentes 456', -99.1332, 19.4326, 'ahorro.png', 'CEN');
 
--- Insert data into customer table
-INSERT INTO customer (idCust, name, lastName, email, birthDate, long, lat, codCity)
-VALUES
-('CUST001', 'John', 'Doe', 'john.doe@example.com', '1985-05-15', -118.2437, 34.0522, 'LA'),
-('CUST002', 'Maria', 'Gonzalez', 'maria.gonzalez@example.com', '1990-08-22', -103.3918, 20.6767, 'GDL');
+-- Insertar en la tabla customer
+INSERT INTO customer (idCust, name, lastName, email, birthDate, longi, lat, codCity) VALUES ('C001', 'John', 'Doe', 'john.doe@example.com', '1985-05-20', -97.7431, 30.2672, 'AUS');
+INSERT INTO customer (idCust, name, lastName, email, birthDate, longi, lat, codCity) VALUES ('C002', 'Maria', 'Perez', 'maria.perez@example.com', '1990-08-15', -99.1332, 19.4326, 'CEN');
 
--- Insert data into medicine table
-INSERT INTO medicine (procedings, name, healthregister, description, desShort, nameRol, idMode, idum, idLab)
-VALUES
-('M-001', 'Ibuprofen 200mg', 'HR12345', 'Used to reduce fever and treat pain or inflammation.', 'Pain reliever', 'Tablet', 1, 1, 1),
-('M-002', 'Paracetamol 500mg', 'HR54321', 'Commonly used for pain relief and fever reduction.', 'Fever reducer', 'Tablet', 1, 1, 2);
+-- Insertar en la tabla medicine
+INSERT INTO medicine (procedings, name, healthregister, description, desShort, nameRol, idMode, idum, idLab, idap) 
+VALUES ('PROC001', 'Tylenol', 'HR001', 'Pain reliever', 'Pain relief', 'Analgesic', 1, 1, 1, 1);
+INSERT INTO medicine (procedings, name, healthregister, description, desShort, nameRol, idMode, idum, idLab, idap) 
+VALUES ('PROC002', 'Advil', 'HR002', 'Anti-inflammatory', 'Reduces inflammation', 'NSAID', 2, 2, 2, 2);
 
--- Insert data into pharmacymedicine table
-INSERT INTO pharmacymedicine (idPha, idMed)
-VALUES
-(1, 1), -- CVS Pharmacy sells Ibuprofen 200mg
-(2, 2); -- Farmacia Guadalajara sells Paracetamol 500mg
+-- Insertar en la tabla pharmacymedicine
+INSERT INTO pharmacymedicine (idPha, idMed, price) VALUES (1, 1, 4.99);
+INSERT INTO pharmacymedicine (idPha, idMed, price) VALUES (2, 2, 5.99);

@@ -25,7 +25,6 @@ public class CountryController {
     private FindCountryUseCase findCountryUseCase;
     private UpdateCountryUseCase updateCountryUseCase;
 
-
     public CountryController() {
         this.countryService = new CountryRepository();
         this.createCountryUseCase = new CreateCountryUseCase(countryService);
@@ -34,11 +33,12 @@ public class CountryController {
         this.findCountryUseCase = new FindCountryUseCase(countryService);
         this.updateCountryUseCase = new UpdateCountryUseCase(countryService);
     }
-    public void mainMenu(){
+
+    public void mainMenu() {
         String opciones = "1. Add Country\n2. Search country\n3. Update Country\n4. Delete Country\n5 List Countries\n6. Return main menu";
         int op;
-        do{
-            op =Integer.parseInt(JOptionPane.showInputDialog(null,opciones));
+        do {
+            op = Integer.parseInt(JOptionPane.showInputDialog(null, opciones));
             switch (op) {
                 case 1:
                     addCountry();
@@ -58,25 +58,27 @@ public class CountryController {
                 case 6:
                     break;
                 default:
-                    JOptionPane.showMessageDialog(null, "Error en la opcion ingresada","Error",JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Error en la opcion ingresada", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                     break;
             }
 
-        }while(op!=6);
+        } while (op != 6);
 
     }
 
     public void addCountry() {
         String codeCountry = JOptionPane.showInputDialog(null, "Country Code:");
         String name = JOptionPane.showInputDialog(null, "Country Name:");
-    
+
         Country country = new Country();
         country.setCodeCountry(codeCountry);
         country.setName(name);
-    
+
         createCountryUseCase.execute(country);
-    
-        JOptionPane.showMessageDialog(null, "Country created:\nCode: " + country.getCodeCountry() + "\nName: " + country.getName());
+
+        JOptionPane.showMessageDialog(null,
+                "Country created:\nCode: " + country.getCodeCountry() + "\nName: " + country.getName());
     }
 
     public Optional<Country> findCountry() {
@@ -86,30 +88,31 @@ public class CountryController {
         return country;
     }
 
-    public void updateCountry(){
+    public void updateCountry() {
         Optional<Country> countryOptional = findCountry();
         if (countryOptional.isPresent()) {
             Country country = countryOptional.get();
             country.setName(JOptionPane.showInputDialog(null, "Ingrese el Nombre de la country"));
             updateCountryUseCase.execute(country);
             showCountry(countryOptional);
-            }
+        }
 
     }
 
-    public void deleteCountry(){
+    public void deleteCountry() {
         Optional<Country> countryOptional = findCountry();
-        if ( countryOptional.isPresent()) {
+        if (countryOptional.isPresent()) {
             Country country = countryOptional.get();
             deleteCountryUseCase.execute(country.getCodeCountry());
-            JOptionPane.showMessageDialog(null, "Country deleted:\nCode: " + country.getCodeCountry() + "\nName: " + country.getName());
+            JOptionPane.showMessageDialog(null,
+                    "Country deleted:\nCode: " + country.getCodeCountry() + "\nName: " + country.getName());
         }
     }
 
-    public List<Country> findAllCountry(){
+    public List<Country> findAllCountry() {
         List<Country> countryes = findAllCountryUseCase.execute();
 
-        String[] columns = {"ID", "Name"};
+        String[] columns = { "ID", "Name" };
         DefaultTableModel model = new DefaultTableModel(columns, 0);
 
         for (Country country : countryes) {
@@ -129,9 +132,9 @@ public class CountryController {
         return countryes;
     }
 
-    public void showCountry(Optional<Country> country){
+    public void showCountry(Optional<Country> country) {
 
-        String[] columns = {"ID", "Name"};
+        String[] columns = { "ID", "Name" };
         DefaultTableModel model = new DefaultTableModel(columns, 0);
 
         if (country.isPresent()) {
@@ -152,10 +155,7 @@ public class CountryController {
         panel.add(scrollPane);
 
         JOptionPane.showMessageDialog(null, panel, "Country List", JOptionPane.PLAIN_MESSAGE);
-    
 
     }
-    
-
 
 }
